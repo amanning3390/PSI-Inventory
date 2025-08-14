@@ -115,8 +115,15 @@ services:
             - .env
         volumes:
             - ./Caddyfile:/etc/caddy/Caddyfile:ro,z
-            - ${INVENTREE_EXT_VOLUME}/static:/var/www/static:z
-            - ${INVENTREE_EXT_VOLUME}/media:/var/www/media:z
-            - ${INVENTREE_EXT_VOLUME}:/var/log:z
-            - ${INVENTREE_EXT_VOLUME}:/data:z
-            - ${INVENTREE_EXT_VOLUME}:/config:z
+            - inventree-static:/var/www/static:z
+            - inventree-media:/var/www/media:z
+            - inventree-logs:/var/log:z
+            - inventree-data:/data:z
+            - inventree-config:/config:z
+
+volumes:
+    inventree-data:
+    inventree-static:
+    inventree-media:
+    inventree-logs:
+    inventree-config:

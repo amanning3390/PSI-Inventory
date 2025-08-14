@@ -28,16 +28,14 @@ services:
             - POSTGRES_DB=inventree
         volumes:
           # Map 'data' volume such that postgres database is stored externally
-          - ./data:/var/lib/postgresql/data:z
+          - ./dev-data:/var/lib/postgresql/data:z
         restart: unless-stopped
 
     # InvenTree web server service
     # Runs the django built-in webserver application
     inventree-dev-server:
-        depends_on:
-          - inventree-dev-db
         build: &build_config
-            context: .
+            context: ../../
             dockerfile: contrib/container/Dockerfile
             target: dev
         # Cache the built image to be used by the inventree-dev-worker process
@@ -47,9 +45,9 @@ services:
             - 8000:8000
         volumes:
             # Mount local source directory to /home/inventree
-            - ./:/home/inventree:z
+            - ../../:/home/inventree:z
         env_file:
-            - contrib/container/docker.dev.env
+            - docker.dev.env
         restart: unless-stopped
 
     # Background worker process handles long-running or periodic tasks
@@ -57,11 +55,9 @@ services:
         image: inventree-dev-image
         build: *build_config
         command: invoke worker
-        depends_on:
-            - inventree-dev-server
         volumes:
             # Mount local source directory to /home/inventree
-            - ./:/home/inventree:z
+            - ../../:/home/inventree:z
         env_file:
-            - contrib/container/docker.dev.env
+            - docker.dev.env
         restart: unless-stopped
